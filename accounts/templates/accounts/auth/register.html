@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+<style>
+    .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .form-check-input:checked + .form-check-label {
+        background-color: rgba(25, 135, 84, 0.1);
+        border-color: #198754;
+    }
+    
+    .form-check:hover .form-check-label {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-4">
+            <h3 class="text-center mb-4 fw-bold text-success">
+                <i class="fas fa-user-plus me-2"></i>Create Your Account
+            </h3>
+            <!-- Form Errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Oops! Something went wrong:</strong>
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li><strong>{{ field|title }}</strong>: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <!--This part for user forms-->
+                <!-- Username -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        {{ form.username|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        {{ form.email|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Role -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Select Your Role</label>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" value="manager" id="id_role_0" required>
+                                <label class="form-check-label" for="id_role_0">
+                                    <i class="fas fa-cogs text-primary me-2"></i>Manager
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" value="customer" id="id_role_1" required>
+                                <label class="form-check-label" for="id_role_1">
+                                    <i class="fas fa-shopping-cart text-success me-2"></i>Customer
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" value="dealer" id="id_role_2" required>
+                                <label class="form-check-label" for="id_role_2">
+                                    <i class="fas fa-warehouse text-warning me-2"></i>Dealer
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="id_password1" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        {{ form.password1|add_class:"form-control" }}
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label for="id_password2" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        {{ form.password2|add_class:"form-control" }}
+                    </div>
+                </div>
+
+
+
+
+                <!-- Dealer-specific fields -->
+                <div id="dealer-fields" class="p-3 bg-light rounded border mt-4" style="display: none;">
+                    <h5 class="mb-3 text-primary"><i class="fas fa-warehouse me-2"></i>Dealer Information</h5>
+                    {{ dealer_form|crispy }}
+                    {% if dealer_form.errors %}
+                        <div class="text-danger">
+                            {% for field in dealer_form %}
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success fw-bold">
+                        <i class="fas fa-check-circle me-2"></i>Register
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-3 text-center text-muted">
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-decoration-none">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<!-- JavaScript to toggle dealer fields -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const roleRadios = document.querySelectorAll('input[name="role"]');
+        const dealerFields = document.getElementById("dealer-fields");
+
+        function toggleDealerFields() {
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            if (selectedRole && selectedRole.value === "dealer") {
+                dealerFields.style.display = "block";
+                dealerFields.classList.add("animate__animated", "animate__fadeIn");
+            } else {
+                dealerFields.style.display = "none";
+                dealerFields.classList.remove("animate__fadeIn");
+            }
+        }
+
+        // Add event listeners to all role radio buttons
+        roleRadios.forEach(function(radio) {
+            radio.addEventListener("change", toggleDealerFields);
+        });
+        
+        toggleDealerFields(); // run on page load
+    });
+</script>
+
+<!-- Optional animation (animate.css CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+{% endblock content %}

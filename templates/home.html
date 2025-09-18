@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rice Supply Chain - Home{% endblock title %}
+
+{% block extra_head %}
+<style>
+    /* Override base template layout for home page */
+    body {
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    
+    .d-flex.flex-grow-1.overflow-hidden {
+        height: auto !important;
+        flex-direction: column !important;
+    }
+    
+    #content {
+        max-height: none !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    /* Hide sidebar on home page */
+    #sidebarWrapper {
+        display: none !important;
+    }
+    
+    #sidebarToggle {
+        display: none !important;
+    }
+    
+    /* Home page specific styles */
+    .animate-fade-in {
+        animation: fadeIn 1s ease-in;
+    }
+    
+    .animate-fade-in-delay {
+        animation: fadeIn 1s ease-in 0.3s both;
+    }
+    
+    .animate-fade-in-delay-2 {
+        animation: fadeIn 1s ease-in 0.6s both;
+    }
+    
+    .animate-fade-in-delay-3 {
+        animation: fadeIn 1s ease-in 0.9s both;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .feature-card {
+        transition: transform 0.3s ease;
+        border-radius: 15px;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .user-type-card {
+        transition: transform 0.3s ease;
+        border-radius: 20px;
+    }
+    
+    .user-type-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-image {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Ensure proper spacing and layout */
+    .hero-section .container {
+        padding: 2rem 1rem;
+    }
+    
+    .py-5 {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+    
+    /* Make sure sections have proper background */
+    section {
+        position: relative;
+    }
+    
+    /* Fix any potential Bootstrap conflicts */
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .col-lg-6, .col-lg-4, .col-md-6, .col-md-4 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content text-white">
+                    <h1 class="display-3 fw-bold mb-4 animate-fade-in">
+                        <span class="text-warning">🌾</span> Rice Supply Chain
+                        <br><span class="text-warning">Management System</span>
+                    </h1>
+                    <p class="lead mb-4 fs-5 animate-fade-in-delay">
+                        Connecting farmers, mill managers, and customers through a transparent, efficient, and trusted platform. 
+                        Experience the future of rice trading.
+                    </p>
+                    
+                    {% if not request.user.is_authenticated %}
+                    <div class="hero-buttons animate-fade-in-delay-2">
+                        <a href="{% url 'register' %}" class="btn btn-warning btn-lg me-3 mb-3 shadow-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="hero-buttons animate-fade-in-delay-2">
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-warning btn-lg me-3 mb-3 shadow-lg">
+                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center animate-fade-in-delay-3">
+                    <div class="hero-placeholder bg-white bg-opacity-10 rounded-4 shadow-lg d-flex align-items-center justify-content-center" 
+                         style="height: 400px; backdrop-filter: blur(10px);">
+                        <div class="text-center text-white">
+                            <i class="fas fa-seedling" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                            <h3 class="fw-bold">Rice Supply Chain</h3>
+                            <p class="mb-0">Connecting the Future of Agriculture</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">Why Choose Our Platform?</h2>
+            <p class="lead text-muted">Experience the benefits of a modern, transparent rice supply chain</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Secure & Trusted</h4>
+                    <p class="text-muted">All transactions are secure with verified users and transparent processes.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-chart-line text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Real-time Tracking</h4>
+                    <p class="text-muted">Track your orders, inventory, and transactions in real-time.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-mobile-alt text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Mobile Friendly</h4>
+                    <p class="text-muted">Access your account and manage business from anywhere, anytime.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Types Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">Join Our Community</h2>
+            <p class="lead text-muted">Choose your role and start your journey with us</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Dealer Card -->
+            <div class="col-lg-4 col-md-6">
+                <div class="user-type-card card h-100 border-0 shadow-lg">
+                    <div class="card-body text-center p-4">
+                        <div class="user-icon mb-3">
+                            <img src="{% static 'default_images/delear_image.png' %}" alt="Dealer" 
+                                 class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+                        <h4 class="fw-bold text-warning">For Dealers</h4>
+                        <p class="text-muted mb-4">
+                            Sell your paddy directly to trusted mill managers with complete transparency and fair pricing.
+                        </p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>Direct access to mill managers</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Fair pricing and quick payments</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Quality verification system</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Inventory management tools</li>
+                        </ul>
+                        {% if not request.user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-warning mt-3">Join as Dealer</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Manager Card -->
+            <div class="col-lg-4 col-md-6">
+                <div class="user-type-card card h-100 border-0 shadow-lg">
+                    <div class="card-body text-center p-4">
+                        <div class="user-icon mb-3">
+                            <img src="{% static 'default_images/mill_manager.jpeg' %}" alt="Manager" 
+                                 class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+                        <h4 class="fw-bold text-primary">For Mill Managers</h4>
+                        <p class="text-muted mb-4">
+                            Source high-quality paddy, manage your rice inventory, and sell to customers efficiently.
+                        </p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>Browse quality paddy posts</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Inventory management system</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Direct customer sales</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Profit tracking & analytics</li>
+                        </ul>
+                        {% if not request.user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-primary mt-3">Join as Manager</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer Card -->
+            <div class="col-lg-4 col-md-6">
+                <div class="user-type-card card h-100 border-0 shadow-lg">
+                    <div class="card-body text-center p-4">
+                        <div class="user-icon mb-3">
+                            <img src="{% static 'default_images/customer.png' %}" alt="Customer" 
+                                 class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+                        <h4 class="fw-bold text-success">For Customers</h4>
+                        <p class="text-muted mb-4">
+                            Buy high-quality rice directly from verified mill managers with competitive prices.
+                        </p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>Quality rice from verified sources</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Competitive pricing</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Easy ordering process</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Order tracking & history</li>
+                        </ul>
+                        {% if not request.user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-success mt-3">Join as Customer</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Access Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3">System Administrator?</h3>
+        <p class="lead mb-4">Access the admin panel for system management and oversight.</p>
+        <a href="{% url 'admin_login' %}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-shield-alt me-2"></i>Admin Portal
+        </a>
+    </div>
+</section>
+{% endblock %}

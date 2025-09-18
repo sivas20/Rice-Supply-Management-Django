@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock title %}
+
+{% block content %}
+<style>
+    .dashboard-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-btn {
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-btn:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    .section-title {
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <h2 class="section-title">👨‍🏭 Welcome to the Admin Dashboard</h2>
+
+    <div class="row g-4">
+        <!-- Admin Profile -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Profile</h5>
+                    <p class="card-text">View or update your admin profile details.</p>
+                    <a href="{% url 'admin_profile' %}" class="btn btn-primary dashboard-btn me-2">View Profile</a>
+                    <a href="{% url 'update_admin_profile' %}" class="btn btn-outline-secondary dashboard-btn">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rice Posts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">📃 Manage Rice Posts</h5>
+                    <p class="card-text">View, update, or delete manager rice posts.</p>
+                    <a href="{% url 'explore_all_rice_post' %}" class="btn btn-info text-white dashboard-btn">Manage Posts</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paddy Posts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0 border-start border-danger border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">🌾 Explore Paddy Posts</h5>
+                    <p class="card-text">View all posted paddy from dealers.</p>
+                    <a href="{% url 'marketplace_paddy_posts' %}" class="btn btn-danger dashboard-btn">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dealers -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0 border-start border-warning border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">👨‍🌾 All Dealers</h5>
+                    <p class="card-text">See all registered dealers in the system.</p>
+                    <a href="{% url 'see_all_delears' %}" class="btn btn-warning text-white dashboard-btn">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Managers -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0 border-start border-primary border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">📦 All Managers</h5>
+                    <p class="card-text">See all registered rice managers.</p>
+                    <a href="{% url 'see_all_manager' %}" class="btn btn-primary dashboard-btn">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100 shadow-sm border-0 border-start border-success border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-success">👥 All Customers</h5>
+                    <p class="card-text">See all registered customers.</p>
+                    <a href="{% url 'see_all_customers' %}" class="btn btn-success dashboard-btn">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

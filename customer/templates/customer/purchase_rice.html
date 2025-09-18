@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold">
+        <i class="fas fa-shopping-cart me-2"></i> Purchase Rice
+    </h2>
+
+    <!-- Rice Details Card -->
+    <div class="card mb-5 shadow-sm border border-primary-subtle">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if rice.rice_image %}
+                    <img src="{{ rice.rice_image.url }}" class="img-fluid rounded-start h-100 object-fit-cover" alt="{{ rice.rice_name }}">
+                {% else %}
+                    <img src="{% static 'default_images/default_rice.jpg' %}" class="img-fluid rounded-start h-100 object-fit-cover" alt="Default rice">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h4 class="card-title text-success">{{ rice.rice_name }}</h4>
+                    <p class="card-text mb-2"><strong>👤 Manager:</strong> {{ rice.manager.managerprofile.full_name }}</p>
+                    <p class="card-text mb-2"><strong>🏷️ Quality:</strong> {{ rice.quality }}</p>
+                    <p class="card-text mb-2"><strong>📦 Available Quantity:</strong> {{ rice.quantity_kg }} kg</p>
+                    <p class="card-text mb-2"><strong>💰 Price per kg:</strong> <span class="text-danger fw-semibold">৳{{ rice.price_per_kg }}</span></p>
+                    <p class="card-text mt-3">{{ rice.description|linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Form -->
+    <div class="card p-4 shadow-sm border border-success-subtle">
+        <h5 class="mb-3 text-success">📝 Complete Your Purchase</h5>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ form.quantity_purchased.id_for_label }}" class="form-label fw-semibold">
+                    <i class="fas fa-weight me-2"></i>Quantity (kg)
+                </label>
+                {{ form.quantity_purchased|add_class:"form-control" }}
+                <div class="form-text">Enter the quantity of rice you want to purchase</div>
+            </div>
+            
+            <!-- Delivery Cost Information -->
+            <div class="alert alert-info">
+                <h6 class="alert-heading">
+                    <i class="fas fa-truck me-2"></i>Delivery Information
+                </h6>
+                <p class="mb-0">
+                    <strong>Delivery cost will be calculated automatically</strong> based on your order quantity and location. 
+                    The final amount will be shown before payment confirmation.
+                </p>
+            </div>
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <button type="submit" class="btn btn-success me-2">
+                <i class="fas fa-check-circle me-1"></i> Confirm Purchase
+            </button>
+            <a href="{% url 'explore_all_rice_post' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-times-circle me-1"></i> Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

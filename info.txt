@@ -1,0 +1,60 @@
+#for manager account
+Username : manager
+password : 1234
+
+username: belaboshe379
+password: onnerhole
+
+username: sourav
+pass: sa389389
+
+
+
+#for customer account
+Username: tawhid
+password: TInishat2002
+
+
+
+# for delear
+username : hasan
+password : 1234hhhh
+
+username: alamin77
+password: tumiami07
+
+username : pallas
+pass: ehp378378
+
+
+
+#for Admin
+username: Siva
+password: Siva@s20
+
+username: khaled391
+password: mahmud12345
+
+python3 manage.py runserver 0.0.0.0:8000   
+http://192.168.1.107:8000
+
+
+# have to be implement
+1. rating
+2. feedback
+3. receipt
+4.refunding
+5. cart
+6. report (indentify froud)
+
+
+
+# implemented
+4. mock payment
+    1. phone number
+    2. otp
+    3. security key
+
+
+
+export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH

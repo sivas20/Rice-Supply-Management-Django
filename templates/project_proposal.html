@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Proposal – Rice Supply Chain Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 40px 15px;
+        }
+        .section-title {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 4px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .project-header {
+            border-top: 3px solid #0d6efd;
+            border-bottom: 3px solid #0d6efd;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container bg-white shadow-sm p-5 rounded">
+
+    <div class="text-center project-header">
+        <h2>Project Proposal</h2>
+        <h4 class="text-muted">Rice Supply Chain Management System</h4>
+    </div>
+
+    <div class="mb-4">
+        <strong>Submitted by:</strong>
+        <ul>
+            <li>Abdullah (Roll: 383)</li>
+            <li>Shanto (Roll: 379)</li>
+            <li>Khaled (Roll: 391)</li>
+            <li>Tawhid (Roll: 395)</li>
+        </ul>
+    </div>
+
+    <div>
+        <div class="section-title">1. Introduction</div>
+        <p>
+            In Bangladesh and many other agriculture-based countries, the rice supply chain still heavily relies on manual and traditional processes,
+            which often lead to inefficiencies, lack of transparency, unfair pricing, and delays in delivery. To address these challenges, our team proposes
+            to build a <strong>“Rice Supply Chain Management System”</strong> – a web-based platform that streamlines the entire journey of rice, starting
+            from rural farmers all the way to the end customer.
+        </p>
+        <p>
+            Our system will connect key stakeholders such as Dealers, Mill Managers, and Customers, with an Admin overseeing the operations. This digital
+            platform will ensure better communication, transparency in pricing, fair trade, easier transactions, and efficient delivery.
+        </p>
+    </div>
+
+    <div>
+        <div class="section-title">2. Project Objective</div>
+        <ul>
+            <li>To digitalize and automate the rice supply chain process.</li>
+            <li>To provide a platform where dealers and mill managers can easily post and negotiate rice/paddy buying and selling.</li>
+            <li>To allow customers to buy rice directly from mill managers.</li>
+            <li>To include a mock payment system for secure and traceable transactions.</li>
+            <li>To add a transportation agreement system between the parties for smooth logistics handling.</li>
+        </ul>
+    </div>
+
+    <div>
+        <div class="section-title">3. System Roles and Workflow</div>
+
+        <p><strong>Admin:</strong></p>
+        <ul>
+            <li>Full control over the website.</li>
+            <li>Can manage users, verify transactions, and handle issues or disputes.</li>
+        </ul>
+
+        <p><strong>Dealer:</strong></p>
+        <ul>
+            <li>Collects paddy from rural farmers.</li>
+            <li>Posts paddy on the website including price, quality, and quantity.</li>
+            <li>Waits for a mill manager to contact and purchase the paddy.</li>
+        </ul>
+
+        <p><strong>Manager (Mill Manager):</strong></p>
+        <ul>
+            <li>Views dealer posts and contacts the dealer for purchase.</li>
+            <li>Makes payments to the dealer via the website.</li>
+            <li>After buying, mills the paddy into rice.</li>
+            <li>Posts the processed rice for sale (with price, quality, quantity).</li>
+            <li>Handles payments from customers and coordinates delivery.</li>
+        </ul>
+
+        <p><strong>Customer:</strong></p>
+        <ul>
+            <li>Can browse rice posts and purchase directly from the manager.</li>
+            <li>Makes mock payments through the system.</li>
+            <li>Coordinates delivery responsibility with the manager.</li>
+        </ul>
+
+        <p><strong>Transportation Handling:</strong></p>
+        <ul>
+            <li>During any transaction, either the dealer or manager (for paddy delivery), or the manager or customer (for rice delivery), will decide who arranges transportation.</li>
+            <li>Based on the agreement, extra transport cost will be added to the total price.</li>
+        </ul>
+    </div>
+
+    <div>
+        <div class="section-title">4. Key Features</div>
+        <ul>
+            <li>User registration/login for all roles.</li>
+            <li>Posting system for paddy and rice with complete details.</li>
+            <li>Contact and negotiation system between users.</li>
+            <li>Mock payment integration for transactions.</li>
+            <li>Transportation arrangement module with cost calculation.</li>
+            <li>Admin dashboard for complete monitoring and control.</li>
+        </ul>
+    </div>
+
+    <div>
+        <div class="section-title">5. Technology Stack</div>
+        <ul>
+            <li><strong>Frontend:</strong> HTML, CSS, JavaScript (with frameworks as needed)</li>
+            <li><strong>Backend:</strong> Python (Django)</li>
+            <li><strong>Database:</strong> SQLite / PostgreSQL</li>
+            <li><strong>Mock Payment System:</strong> Simulated payment gateway using session/transaction records</li>
+            <li><strong>Version Control:</strong> Git & GitHub</li>
+        </ul>
+    </div>
+
+    <div>
+        <div class="section-title">6. Team Member Responsibilities</div>
+        <p><strong>Abdullah (Roll: 383):</strong></p>
+        <ul>
+            <li>Manager Module, Purchase System, Milling Process, Posting Rice, Payments, Transport Handling</li>
+        </ul>
+        
+        <p><strong>Shanto (Roll: 379):</strong></p>
+        <ul>
+            <li>Dealer Module, Registration/Login, Posting Paddy, Contact & Negotiation, Transport Interface</li>
+        </ul>
+        
+        <p><strong>Khaled (Roll: 391):</strong></p>
+        <ul>
+            <li>Admin Module, Dashboard, User Management, Verification, Monitoring Tools</li>
+        </ul>
+
+        <p><strong>Tawhid (Roll: 395):</strong></p>
+        <ul>
+            <li>Customer Module, Mock Payment System, Browsing/Purchase, Transport UI with Manager</li>
+        </ul>
+
+        <p>Each member will also contribute to UI design, testing, and documentation.</p>
+    </div>
+
+    <div>
+        <div class="section-title">7. Expected Outcome</div>
+        <p>
+            We aim to deliver a complete, functional web-based platform that models a real-life rice supply chain with multiple actors.
+            It will simulate economic transactions and demonstrate how technology brings transparency, trust, and efficiency in agriculture-based industries.
+        </p>
+    </div>
+
+    <div>
+        <div class="section-title">8. Conclusion</div>
+        <p>
+            Our “Rice Supply Chain Management System” is more than just a technical project – it reflects a practical solution to a real-life problem that affects millions.
+            Through this project, we hope to gain experience in full-stack development, team collaboration, and applying tech for real-world impact.
+        </p>
+        <p>
+            We sincerely seek your kind approval and guidance to proceed further.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

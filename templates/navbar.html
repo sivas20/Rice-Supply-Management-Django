@@ -1,0 +1,188 @@
+<!-- Modern User-Friendly Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+        <!-- Brand Logo -->
+        <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="{% url 'home' %}">
+            <span class="me-2">🌾</span>
+            <span class="d-none d-sm-inline">Rice Supply Chain</span>
+            <span class="d-sm-none">RSCMS</span>
+        </a>
+
+        <!-- Navbar Toggler for Mobile -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.role == "manager" %}
+                        <a class="nav-link fw-semibold" href="{% url 'manager_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        {% elif request.user.role == "customer" %}
+                        <a class="nav-link fw-semibold" href="{% url 'customer_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        {% elif request.user.role == "dealer" %}
+                        <a class="nav-link fw-semibold" href="{% url 'dealer_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <a class="nav-link fw-semibold" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                    {% endif %}
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">
+                        <i class="fas fa-info-circle me-1"></i>About
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'services' %}">
+                        <i class="fas fa-cogs me-1"></i>Services
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search functionality -->
+            {% if request.user.is_authenticated %}
+            <form class="d-flex me-3" action="{% url 'search' %}" method="get">
+                <div class="input-group">
+                    <input class="form-control border-end-0" type="search" placeholder="Search products..." aria-label="Search" name="query" id="search" style="border-radius: 25px 0 0 25px;">
+                    <button class="btn btn-outline-primary border-start-0" type="submit" style="border-radius: 0 25px 25px 0;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+
+            <!-- User Authentication Section -->
+            <ul class="navbar-nav">
+                {% if request.user.is_authenticated %}
+                <!-- User Profile Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar me-2">
+                            {% if request.user.role == "manager" %}
+                            <i class="fas fa-user-tie text-primary"></i>
+                            {% elif request.user.role == "customer" %}
+                            <i class="fas fa-user text-success"></i>
+                            {% elif request.user.role == "dealer" %}
+                            <i class="fas fa-user-tag text-warning"></i>
+                            {% endif %}
+                        </div>
+                        <span class="fw-semibold">{{ request.user.username }}</span>
+                        <small class="text-muted ms-1">({{ request.user.role|title }})</small>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                        <li>
+                            <h6 class="dropdown-header">
+                                <i class="fas fa-user-circle me-2"></i>Account
+                            </h6>
+                        </li>
+                        <li><a class="dropdown-item" href="#">
+                            <i class="fas fa-user me-2"></i>Profile
+                        </a></li>
+                        <li><a class="dropdown-item" href="{% url 'change_password' %}">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <!-- Guest User Actions -->
+                <li class="nav-item me-2">
+                    <a class="btn btn-outline-primary" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-primary" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus me-1"></i>Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar {
+        transition: all 0.3s ease;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .navbar-brand:hover {
+        transform: scale(1.05);
+    }
+    
+    .nav-link {
+        transition: color 0.3s ease;
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: #007bff !important;
+    }
+    
+    .dropdown-menu {
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dropdown-item {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 2px 8px;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+    }
+    
+    .input-group .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn {
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
