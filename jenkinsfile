@@ -9,6 +9,7 @@ pipeline {
       steps {
         checkout([$class: 'GitSCM', branches: [[name: '*/main']],
           userRemoteConfigs: [[url: 'https://github.com/sivas20/Rice-Supply-Management-Django.git', credentialsId: 'git-creds']]])
+          echo "Checked out code from Git repository"
       }
     }
 
@@ -17,18 +18,21 @@ pipeline {
         bat 'python -m venv .venv'
         bat '.venv\\Scripts\\pip install --upgrade pip'
         bat '.venv\\Scripts\\pip install -r requirements.txt'
+        echo "Python environment set up and dependencies installed"
       }
     }
 
     stage('Migrations (optional)') {
       steps {
         bat '.venv\\Scripts\\python manage.py migrate --noinput'
+        echo "Database migrations applied"
       }
     }
 
     stage('Run Tests') {
       steps {
         bat '.venv\\Scripts\\python -m pytest --junitxml=test-results.xml -q'
+        echo "Tests executed and results collected"
       }
     }
   }
@@ -37,6 +41,7 @@ pipeline {
     always {
       junit '**/test-results.xml'
       archiveArtifacts artifacts: 'test-results.xml,coverage*.xml,htmlcov/**', allowEmptyArchive: true
+      echo "Test results and coverage reports archived"
     }
   }
 }
