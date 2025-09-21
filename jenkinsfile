@@ -1,0 +1,42 @@
+pipeline {
+  agent any
+  environment {
+    DJANGO_SETTINGS_MODULE = 'Rice_Supply_Chain_Management_System.settings'
+    PYTHONUNBUFFERED = '1'
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout([$class: 'GitSCM', branches: [[name: '*/main']],
+          userRemoteConfigs: [[url: 'https://github.com/sivas20/Rice-Supply-Management-Django.git', credentialsId: 'git-creds']]])
+      }
+    }
+
+    stage('Setup Python') {
+      steps {
+        bat 'python -m venv .venv'
+        bat '.venv\\Scripts\\pip install --upgrade pip'
+        bat '.venv\\Scripts\\pip install -r requirements.txt'
+      }
+    }
+
+    stage('Migrations (optional)') {
+      steps {
+        bat '.venv\\Scripts\\python manage.py migrate --noinput'
+      }
+    }
+
+    stage('Run Tests') {
+      steps {
+        bat '.venv\\Scripts\\python -m pytest --junitxml=test-results.xml -q'
+      }
+    }
+  }
+
+  post {
+    always {
+      junit '**/test-results.xml'
+      archiveArtifacts artifacts: 'test-results.xml,coverage*.xml,htmlcov/**', allowEmptyArchive: true
+    }
+  }
+}
