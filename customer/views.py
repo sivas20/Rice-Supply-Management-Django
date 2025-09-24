@@ -253,7 +253,7 @@ def send_purchases_otp_customer(request, mobile, purchase_id):
         # On error, fallback to email
         print(f"DEBUG SMS error: {e}")
         # If SMS fails and email isn't available, still show OTP for development
-        messages.warning(request, f"SMS failed. Use OTP: {otp}")
+        messages.warning(request, f"SMS failed. User not Reachable !s")
     return redirect('insert_otp_customer', purchase_id=purchase_id, mobile=phone)
     
 @login_required
