@@ -32,16 +32,24 @@ class DeliveryCostSettings(models.Model):
             settings = cls.objects.create()
         return settings
 class CustomerProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role':'customer'},related_name="customerprofile")
+    user = models.OneToOneField(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'role': 'customer'}, 
+        related_name="customerprofile"
+    )
     full_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=11)
-    Transaction_password = models.CharField(max_length=11,null=True,blank=True)
-    address =models.TextField()
-    image = models.ImageField(upload_to="customer_profile/",blank=True,null=True)
-    date_of_birth = models.DateField(blank=True,null=True)
-    created_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+    email = models.EmailField(max_length=255)  # replaced phone_number with email
+    Transaction_password = models.CharField(max_length=11, null=True, blank=True)
+    address = models.TextField()
+    image = models.ImageField(upload_to="customer_profile/", blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
+    def __str__(self):
+        return self.full_name
 
+        
 class Purchase_Rice(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),

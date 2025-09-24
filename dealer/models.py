@@ -171,7 +171,7 @@ class Marketplace(models.Model):
 
     # স্টক থেকে কপি হওয়া ফিল্ড — ফর্মে অটো-ফিল হবে
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='marketplace_images/')
+    image = models.ImageField(upload_to='marketplace_images/', blank=True, null=True)
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     moisture_content = models.DecimalField(max_digits=4, decimal_places=1)
     price_per_mon = models.DecimalField(max_digits=10, decimal_places=2)

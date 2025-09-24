@@ -11,6 +11,7 @@ import uuid
 import random
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
+from twilio.rest import Client
 from django.conf import settings
 from django.db.models import Q
 
@@ -47,13 +48,15 @@ def customer_profile(request):
 def update_customer_profile(request):
     customer = get_object_or_404(CustomerProfile, user=request.user)
     if request.method == "POST":
-        form = CustomerProfileForm(request.POST, request.FILES,instance=customer)
+        form = CustomerProfileForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
-            form.save()
+            profile = form.save()
+            request.user.email = profile.email
+            request.user.save(update_fields=["email"])
             return redirect("customer_profile")
     else:
         form = CustomerProfileForm(instance=customer)
-    return render(request,"customer/update_customer_profile.html",{'form':form})
+    return render(request, "customer/update_customer_profile.html", {'form': form})
 
 
 def update_customer_profile_by_admin(request,id):
@@ -131,7 +134,7 @@ def purchase_rice_from_manager(request, id):
 @login_required
 @user_passes_test(check_customer_or_admin)
 def rice_purchases_history(request):
-    purchases_rice = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
+    purchases_rice = Purchase_Rice.objects.filter(customer=request.user, payment=True).order_by("-purchase_date")
     # print(purchases_rice.payment)
     context = {
         "purchases_rice": purchases_rice
@@ -172,74 +175,128 @@ def mock_customer_rice_payment(request, purchase_id):
 
 @login_required
 @user_passes_test(check_customer)
-def insert_phone_number_customer(request,purchase_id):
-    rice = get_object_or_404(Purchase_Rice,pk=purchase_id,customer=request.user) 
-    
+def insert_phone_number_customer(request, purchase_id):
+    rice = get_object_or_404(Purchase_Rice, pk=purchase_id, customer=request.user)
+
     if request.method == "POST":
         phone_number = request.POST.get('phone')
-        if phone_number == rice.customer.customerprofile.phone_number:
-            return redirect('send_purchases_otp_customer',email=rice.customer.customerprofile.user.email,purchase_id=purchase_id)
-        else:
-            messages.error(request,"Wrong phone number, insert the correct number")
-            return redirect("insert_phone_number_customer",purchase_id=purchase_id)
 
-    return render(request,"customer/payment/insert_phone_number.html")
+        # Normalize helper: keep only digits, then compare last 10 digits
+        import re
+        def normalize_last10(value):
+            if not value:
+                return None
+            digits = re.sub(r'\D', '', str(value))
+            return digits[-10:] if len(digits) >= 10 else digits
+
+        entered_last10 = normalize_last10(phone_number)
+        account_mobile = getattr(rice.customer, 'mobile', None)
+        account_last10 = normalize_last10(account_mobile)
+
+        # Debug: Print values to console (remove in production)
+        print(f"DEBUG - Entered phone: {phone_number}")
+        print(f"DEBUG - Entered last10: {entered_last10}")
+        print(f"DEBUG - Account mobile: {account_mobile}")
+        print(f"DEBUG - Account last10: {account_last10}")
+
+        # Accept if the last 10 digits match the user's stored mobile
+        if entered_last10 and account_last10 and entered_last10 == account_last10:
+            # Store raw entered digits for OTP sending; sender will add country code
+            request.session['otp_phone'] = entered_last10
+            return redirect('send_purchases_otp_customer', mobile=entered_last10, purchase_id=purchase_id)
+        else:
+            messages.error(request, f"Wrong phone number. Expected: {account_mobile}, Got: {phone_number}")
+            return redirect("insert_phone_number_customer", purchase_id=purchase_id)
+
+    return render(request, "customer/payment/insert_phone_number.html")
 
 otp_storage = {}
 @login_required
 @user_passes_test(check_customer)
-def send_purchases_otp_customer(request,email,purchase_id):
-    otp = random.randint(100000,999999)
-    otp_storage[email] = {
-        'otp' : otp,
-        'timestamp' : datetime.now()
+def send_purchases_otp_customer(request, mobile, purchase_id):
+    otp = random.randint(100000, 999999)
+    # Prefer URL-provided mobile; fallback to session
+    phone = mobile or request.session.get('otp_phone')
+    otp_storage[phone] = {
+        'otp': otp,
+        'timestamp': datetime.now()
     }
-    subject = "Transaction OTP - RSCMS"
-    message = f"Assalamu Alaikum\n\nYour OTP for transaction is: {otp}\n\nNever share your Code and PIN with anyone.\n\nRSCMS never ask for this.\n\nExpiry: within 300 seconds"
-    send_mail(subject,message,settings.EMAIL_HOST_USER, [email])
-    
-    return redirect("insert_otp_customer",purchase_id=purchase_id,email=email)
+    # Send via Twilio SMS
+    try:
+        account_sid = settings.TWILIO_ACCOUNT_SID
+        auth_token = settings.TWILIO_AUTH_TOKEN
+        from_number = settings.TWILIO_FROM_NUMBER
+        if account_sid and auth_token and from_number and phone:
+            client = Client(account_sid, auth_token)
+            body = f"RSCMS: Your OTP is {otp}. It expires in 5 minutes. Do not share it."
+            to_number = "+91" + phone[-10:] 
+            print(f"DEBUG SMS → to: {to_number}, body: {body}")
+            client.messages.create(body=body, from_=from_number, to=to_number)
+        else:
+            # Development fallback: email if available, otherwise show OTP on screen
+            subject = "Transaction OTP - RSCMS"
+            message = f"Your OTP for transaction is: {otp}. Expires in 5 minutes."
+            sent_email = False
+            try:
+                if request.user.email:
+                    send_mail(subject, message, settings.EMAIL_HOST_USER, [request.user.email])
+                    sent_email = True
+            except Exception as mail_err:
+                print(f"DEBUG Email send failed: {mail_err}")
+            if sent_email:
+                messages.info(request, "SMS not configured; sent OTP to your email.")
+            else:
+                # Show OTP via message for development use
+                messages.warning(request, f"SMS/email not configured. Use OTP: {otp}")
+                print(f"DEBUG OTP (fallback): {otp}")
+    except Exception as e:
+        # On error, fallback to email
+        print(f"DEBUG SMS error: {e}")
+        # If SMS fails and email isn't available, still show OTP for development
+        messages.warning(request, f"SMS failed. Use OTP: {otp}")
+    return redirect('insert_otp_customer', purchase_id=purchase_id, mobile=phone)
     
 @login_required
 @user_passes_test(check_customer)
-def verify_purchases_otp_customer(request, email, purchase_id, otp):
-    data = otp_storage.get(email)
+def verify_purchases_otp_customer(request, mobile, purchase_id, otp):
+    import re
+    phone = re.sub(r'\D', '', str(mobile))[-10:]
+    data = otp_storage.get(phone)
     if data:
         otp_valid = data['otp'] == otp
         otp_expired = datetime.now() > data['timestamp'] + timedelta(minutes=5)
 
         if otp_valid and not otp_expired:
-            del otp_storage[email]
+            del otp_storage[phone]
             messages.success(request, "OTP verified successfully.")
-            return redirect("insert_password_customer", purchase_id=purchase_id,email=email)
+            return redirect("insert_password_customer", purchase_id=purchase_id, mobile=mobile)
         elif otp_expired:
-            del otp_storage[email]
+            del otp_storage[phone]
             messages.error(request, "OTP has expired. Please request a new one.")
             return redirect('insert_phone_number_customer', purchase_id=purchase_id)
         else:
             messages.error(request, "Invalid OTP. Please try again.")
-            return redirect('insert_otp_customer', purchase_id=purchase_id, email=email)
+            return redirect('insert_otp_customer', purchase_id=purchase_id, mobile=mobile)
     else:
-        messages.error(request, "No OTP found for this email.")
+        messages.error(request, "No OTP found. Please request a new one.")
         return redirect('insert_phone_number_customer', purchase_id=purchase_id)
 
 
 
 @login_required
 @user_passes_test(check_customer)
-def insert_otp_customer(request,purchase_id,email):
+def insert_otp_customer(request, purchase_id, mobile):
     if request.method == "POST":
         otp = request.POST.get("otp")
-        return redirect("verify_purchases_otp_customer",email=email,purchase_id=purchase_id,otp=otp)
-    return render(request,"customer/payment/insert_otp.html",{'purchase_id':purchase_id})
-    
+        return redirect("verify_purchases_otp_customer", purchase_id=purchase_id, otp=otp, mobile=mobile)
+    return render(request, "customer/payment/insert_otp.html", {'purchase_id': purchase_id, 'mobile': mobile})
+
 @login_required
 @user_passes_test(check_customer)
-def insert_password_customer(request, purchase_id, email):
+def insert_password_customer(request, purchase_id, mobile):
     purchase = get_object_or_404(Purchase_Rice, pk=purchase_id, customer=request.user)
-    rice = purchase.rice
-    amount = request.session.get('payment_amount')  # Get from session
-
+    amount = request.session.get('payment_amount')
+    
     if not amount:
         messages.error(request, "Payment session expired.")
         return redirect('mock_customer_rice_payment', purchase_id=purchase_id)
@@ -247,30 +304,28 @@ def insert_password_customer(request, purchase_id, email):
     if request.method == "POST":
         password = request.POST.get('password')
         if password == purchase.customer.customerprofile.Transaction_password:
-            # ✅ Now process payment
             payment = Payment_For_Rice.objects.create(
                 user=request.user,
-                rice=rice,
+                rice=purchase.rice,
                 amount=amount,
                 transaction_id=f'MOCK-{uuid.uuid4().hex[:8]}',
                 is_paid=True,
                 status="Success"
             )
             purchase.payment = True
-            purchase.save()
-
-            del request.session['payment_amount']  # ✅ Clean up session
+            purchase.status = "Successful"
+            purchase.save(update_fields=["payment", "status"])
+            del request.session['payment_amount']
             messages.success(request, "Payment successful.")
             return redirect('mock_customer_rice_payment_success')
         else:
             messages.error(request, "Incorrect password.")
-            return redirect("insert_password_customer", purchase_id=purchase_id, email=email)
+            return redirect("insert_password_customer", purchase_id=purchase_id, mobile=mobile)
 
     return render(request, "customer/payment/insert_password.html", {
         'purchase_id': purchase_id,
-        'email': email
+        'mobile': mobile
     })
-
 
 @login_required
 @user_passes_test(check_customer)
@@ -289,7 +344,7 @@ def explore_rice_post(request):
 @login_required
 @user_passes_test(lambda u: u.role == 'customer')
 def my_order_page(request):
-    orders = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
+    orders = Purchase_Rice.objects.filter(customer=request.user).exclude(status="Successful").order_by("-purchase_date")
     return render(request, 'customer/my_order_page.html', {'orders': orders})
 
 @login_required
@@ -303,7 +358,7 @@ def confirm_delivery(request, id):
             order.save()
             return redirect('my_order_page')
         else:
-            return redirect('mock_rice_payment', id=order.id)
+            return redirect('mock_customer_rice_payment', purchase_id=order.id)
         
         
 
@@ -329,12 +384,23 @@ def download_receipt_for_buying_rice_for_customer(request, id):
     rice = get_object_or_404(Purchase_Rice,id=id,customer=request.user)
     price_per_kg = float(rice.total_price-rice.delivery_cost)//float(rice.quantity_purchased)
     
-    html_string = render_to_string("customer/receipt.html",{"rice":rice,"price_per_kg":price_per_kg})
-    response = HttpResponse(content_type = 'application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
-    
-    HTML(string=html_string).write_pdf(response)
-    return response
+    try:
+        # Try to generate PDF using weasyprint
+        from weasyprint import HTML
+        html_string = render_to_string("customer/receipt.html",{"rice":rice,"price_per_kg":price_per_kg})
+        response = HttpResponse(content_type = 'application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
+        
+        HTML(string=html_string).write_pdf(response)
+        return response
+    except ImportError:
+        # Fallback: return HTML receipt if weasyprint is not installed
+        messages.warning(request, "PDF generation not available. Showing receipt in browser.")
+        return render(request, "customer/receipt.html", {"rice": rice, "price_per_kg": price_per_kg})
+    except Exception as e:
+        # Fallback: return HTML receipt if PDF generation fails
+        messages.warning(request, f"PDF generation failed: {str(e)}. Showing receipt in browser.")
+        return render(request, "customer/receipt.html", {"rice": rice, "price_per_kg": price_per_kg})
     # print(rice.rice.rice_name)
     # print(rice.rice.manager.managerprofile.full_name)
     # print(rice.rice.manager.managerprofile.mill_name)

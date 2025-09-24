@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
         ('dealer', 'Dealer'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='admin')
+    mobile = models.CharField(max_length=20, blank=True, null=True, help_text="Mobile number for OTP verification")
     
     def __str__(self):
         return self.username

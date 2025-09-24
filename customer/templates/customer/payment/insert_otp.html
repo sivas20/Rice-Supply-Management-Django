@@ -6,7 +6,7 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <h3 class="text-center text-primary mb-4">OTP Verification</h3>
-                <p class="text-muted text-center">Enter the 6-digit OTP sent to your email to proceed with the transaction.</p>
+                <p class="text-muted text-center">Enter the 6-digit OTP sent to your mobile number to proceed.</p>
 
                 <form method="post" novalidate>
                     {% csrf_token %}
@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="{% url 'insert_phone_number' purchase_id %}" class="btn btn-outline-secondary">Back</a>
+                        <a href="{% url 'insert_phone_number_customer' purchase_id %}" class="btn btn-outline-secondary">Back</a>
                         <button type="submit" class="btn btn-primary">Verify OTP</button>
                     </div>
                 </form>

@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # for custom user
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -95,6 +98,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+        },
     }
 }
 
@@ -152,10 +158,15 @@ USE_TZ = True
 TIME_ZONE = 'Asia/Dhaka'
 
 
-# SMTP Email Configuration (Gmail)
+# SMTP API Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'shakibrybmn@gmail.com'  # Replace with your Gmail
-EMAIL_HOST_PASSWORD = 'egpi ilyt huuw lcux'  # Generate an App Password from Google
+EMAIL_HOST_USER = 'sivarajannapadali@gmail.com'  # Replace with your Gmail
+EMAIL_HOST_PASSWORD = 'ywke oiqy mldb tbgp'  # Generate an App Password from Google
+
+# Twilio SMS
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_FROM_NUMBER = os.getenv('TWILIO_FROM_NUMBER', '')

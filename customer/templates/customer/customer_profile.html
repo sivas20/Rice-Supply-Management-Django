@@ -26,12 +26,12 @@
                         <div class="col-sm-8">{{ customer.user.username }}</div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">📧 Email:</div>
-                        <div class="col-sm-8">{{ customer.user.email }}</div>
+                        <div class="col-sm-4 fw-bold">📱 Mobile:</div>
+                        <div class="col-sm-8">{{ customer.user.mobile|default:"Not provided" }}</div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-4 fw-bold">📞 Phone:</div>
-                        <div class="col-sm-8">{{ customer.phone_number }}</div>
+                        <div class="col-sm-4 fw-bold">📧 Email:</div>
+                        <div class="col-sm-8">{{ customer.email|default:customer.user.email}}</div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-sm-4 fw-bold">🔐 Transaction Password:</div>

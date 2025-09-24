@@ -16,13 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('admin-panel/', include('admin_panel.urls')),
-    path('',include('RSCMS_app.urls')),
+    # Expose Django admin at /django-admin/
+    path('django-admin/', admin.site.urls),
+    
+    # Custom Admin Panel at /admin/
+    path('admin/', RedirectView.as_view(pattern_name='admin_login', permanent=False)),
+    path('admin/', include('admin_panel.urls')),
+    
+    path('', include('RSCMS_app.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

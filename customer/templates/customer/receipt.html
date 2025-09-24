@@ -1,60 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Rice Stock Report</title>
-    <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            border: 1px solid #444;
-            padding: 6px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        h2 {
-            text-align: center;
-            color: red;
-            margin-bottom: 2px;
-        }
-        h4 { text-align: center; margin-bottom: -9px; }
-        h5 { text-align: center; margin-bottom: 1px; }
-    </style>
+  <meta charset="utf-8">
+  <title>Rice Stock Report</title>
+  <style>
+    /* Page layout */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Header styles */
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .header h2 {
+      font-size: 24px;
+      margin: 0;
+      color: #d63333;
+    }
+    .header h4,
+    .header h5 {
+      margin: 3px 0;
+      font-weight: normal;
+      color: #555;
+    }
+
+    /* Table styles */
+    table {
+      width: 70%;
+      margin: 10px auto; /* centers the table */
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #0d6efd;
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    /* Total cell highlight */
+    td.total {
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      th, td {
+        font-size: 12px;
+        padding: 6px;
+      }
+      .header h2 {
+        font-size: 18px;
+      }
+      table {
+        width: 95%; /* shrink table on small screens */
+      }
+    }
+  </style>
 </head>
 <body>
-    <h2>📄 Riceipt for purchases Rice</h2>
+
+  <div class="header">
+    <h2>📄 Receipt for Rice Purchase</h2>
     <h4>Manager: {{ rice.rice.manager.managerprofile.full_name }}</h4>
     <h5>Mill Name: {{ rice.rice.manager.managerprofile.mill_name }}</h5>
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Rice Name</th>
-                <th>Quantity (kg)</th>
-                <th>Price/kg (৳)</th>
-                <th>Delivery Cost (৳)</th>
-                <th>Total Price (৳)</th>
-                <th>Purchases Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            <tr>
-                <td>{{ rice.rice.rice_name }}</td>
-                <td>{{ rice.quantity_purchased}}</td>
-                <td>{{ price_per_kg }}</td>
-                <td>{{ rice.delivery_cost }}</td>
-                <td>{{ rice.total_price }}</td>
-                <td>{{ rice.purchase_date|date:"M d, Y h:i A" }}</td>
-            </tr>
+  <table>
+    <thead>
+      <tr>
+        <th>Rice Name</th>
+        <th>Quantity (kg)</th>
+        <th>Price/kg (৳)</th>
+        <th>Delivery Cost (৳)</th>
+        <th>Total Price (৳)</th>
+        <th>Purchases Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ rice.rice.rice_name }}</td>
+        <td>{{ rice.quantity_purchased }}</td>
+        <td>{{ price_per_kg }}</td>
+        <td>{{ rice.delivery_cost }}</td>
+        <td class="total">{{ rice.total_price }}</td>
+        <td>{{ rice.purchase_date|date:"M d, Y h:i A" }}</td>
+      </tr>
+    </tbody>
+  </table>
 
-        </tbody>
-    </table>
 </body>
 </html>

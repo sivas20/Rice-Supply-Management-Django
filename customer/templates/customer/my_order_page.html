@@ -24,7 +24,6 @@
                 </thead>
                 <tbody>
                     {% for order in orders %}
-                        {% if order.status != "Successful" %}
                         <tr>
                             <td>{{ order.rice.manager.managerprofile.full_name }}</td>
                             <td>{{ order.rice.rice_name }}</td>
@@ -68,7 +67,6 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

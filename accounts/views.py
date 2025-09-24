@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from dealer.forms import DealerProfileForm
 from .forms import CustomUserCreationForm
+from customer.models import CustomerProfile
 
 def register_view(request):
     if request.method == "POST":
@@ -15,13 +16,38 @@ def register_view(request):
         dealer_form = DealerProfileForm(request.POST)
         
         if form.is_valid():
-            user = form.save()  # Save user first
+            user = form.save(commit=False)
+            
+            # Ensure mobile is properly set for OTP functionality
+            if user.mobile:
+                # Clean and format mobile (remove any non-digit characters except +)
+                import re
+                mobile = re.sub(r'[^\d+]', '', user.mobile)
+                if not mobile.startswith('+'):
+                    # Add country code if not present (example: +91 for India or +880 for Bangladesh)
+                    mobile = mobile.lstrip('0')
+                    mobile = '+91' + mobile  # adjust as needed
+                user.mobile = mobile
+            
+            user.save()  # Save user with formatted mobile
             
             # Only save dealer form if the user is a 'dealer'
             if user.role == 'dealer' and dealer_form.is_valid():
                 dealer_profile = dealer_form.save(commit=False)
                 dealer_profile.user = user  # Link the dealer profile to the created user
                 dealer_profile.save()    
+            # Auto-create customer profile for customers with basic info
+            if user.role == 'customer':
+                customer_profile, created = CustomerProfile.objects.get_or_create(
+                    user=user,
+                    defaults={
+                        'full_name': user.username,  # Use username as default full name
+                        'email': user.email if user.email else '',  # Use email if available
+                        'address': 'Please update your address',  # Default address
+                    }
+                )
+            
+            messages.success(request, f"Account created successfully! You can now login with your username: {user.username}")
             return redirect('login')  
     else:
         form = CustomUserCreationForm()

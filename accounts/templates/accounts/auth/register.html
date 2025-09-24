@@ -62,13 +62,16 @@
                     </div>
                 </div>
 
-                <!-- Email -->
+                <!-- Mobile Number -->
                 <div class="mb-3">
-                    <label for="id_email" class="form-label">Email Address</label>
+                    <label for="id_mobile" class="form-label">Mobile Number</label>
                     <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        {{ form.email|add_class:"form-control" }}
+                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        {{ form.mobile|add_class:"form-control" }}
                     </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle me-1"></i>This will be used for OTP verification during purchases
+                    </small>
                 </div>
 
                 <!-- Role -->
@@ -109,17 +112,10 @@
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         {{ form.password1|add_class:"form-control" }}
                     </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>Choose a strong password for your account
+                    </small>
                 </div>
-
-                <!-- Confirm Password -->
-                <div class="mb-3">
-                    <label for="id_password2" class="form-label">Confirm Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        {{ form.password2|add_class:"form-control" }}
-                    </div>
-                </div>
-
 
 
 

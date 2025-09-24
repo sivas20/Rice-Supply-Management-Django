@@ -14,12 +14,11 @@ urlpatterns = [
 
     path("mock_customer_rice_payment/<int:purchase_id>/", views.mock_customer_rice_payment, name="mock_customer_rice_payment"),
     path('insert-phone-number/<int:purchase_id>/', views.insert_phone_number_customer, name='insert_phone_number_customer'),
-    path('insert-otp/<int:purchase_id>/<str:email>/', views.insert_otp_customer, name='insert_otp_customer'),
-    path('insert-password/<int:purchase_id>/<str:email>', views.insert_password_customer, name='insert_password_customer'),
+    path('insert-otp/<int:purchase_id>/<str:mobile>/', views.insert_otp_customer, name='insert_otp_customer'),
+    path('insert-password/<int:purchase_id>/<str:mobile>/', views.insert_password_customer, name='insert_password_customer'),
     
-    path("verify_purchases_otp/<str:email>/<int:purchase_id>/<int:otp>/",views.verify_purchases_otp_customer,name="verify_purchases_otp_customer"),
-    path("send_purchases_otp/<str:email>/<int:purchase_id>/",views.send_purchases_otp_customer,name="send_purchases_otp_customer"),
-    
+    path("verify_purchases_otp/<str:mobile>/<int:purchase_id>/<int:otp>/", views.verify_purchases_otp_customer, name="verify_purchases_otp_customer"),
+    path("send_purchases_otp/<str:mobile>/<int:purchase_id>/", views.send_purchases_otp_customer, name="send_purchases_otp_customer"),
     path("mock_customer_rice_payment_success/", views.mock_customer_rice_payment_success, name="mock_customer_rice_payment_success"),
     path("mock_customer_rice_payment_fail/", views.mock_customer_rice_payment_fail, name="mock_customer_rice_payment_fail"),
 
